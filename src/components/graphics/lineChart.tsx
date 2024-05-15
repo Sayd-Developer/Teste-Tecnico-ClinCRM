@@ -1,7 +1,9 @@
 import { XAxis, YAxis, CartesianGrid, Tooltip, Legend, Line, LineChart } from 'recharts';
 
+
+
 interface lineChartType {
-    data: any[];
+    data: unknown[];
     datakey?: string;
     datekey?: string;
 }
