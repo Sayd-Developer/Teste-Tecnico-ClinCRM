@@ -1,57 +1,130 @@
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from 'zod';
 import { Button } from "../../components/ui/button";
+import { initializeApp } from "firebase/app";
+import { getFirestore, collection, addDoc, doc, deleteDoc, getDocs, updateDoc } from "firebase/firestore";
 
 const schemaForm = z.object({
-    nome: z.string().min(3, 'Por favor, informe um nome válido'),
-    operacao: z.string().min(3, 'Por favor, informe uma operação válida'),
-    valor: z.string().min(1, 'Por favor, informe um valor válido'),
-    pagamento: z.string().min(3, 'Por favor, informe um tipo de pagamento válido'),
-    data: z.string().min(10, 'Por favor, informe uma data válida'),
+    nome: z.string().min(3, 'informe um nome válido'),
+    operacao: z.string().min(3, 'informe uma operação válida'),
+    valor: z.string().min(1, 'informe um valor válido'),
+    pagamento: z.string().min(3, 'informe um tipo de pagamento válido'),
+    data: z.string().min(1, 'informe uma data válida'),
 });
 
 type FormProps = z.infer<typeof schemaForm>;
 
-export default function NewForm() {
-    const { register, handleSubmit, formState: { errors } } = useForm<FormProps>({
+const firebaseApp = initializeApp({
+    apiKey: "AIzaSyAoUkHfSEyEuJYiJKplQT48rtionfWsdnM",
+    authDomain: "project-clincrm.firebaseapp.com",
+    projectId: "project-clincrm",
+})
+
+export const db = getFirestore(firebaseApp)
+const countCollectionRef = collection(db, "contas");
+
+
+export default function crud() {
+
+    const { register, handleSubmit, formState: { errors }, reset } = useForm<FormProps>({
         resolver: zodResolver(schemaForm)
     });
 
-    const onSubmit = (data: FormProps) => {
-        console.log(data);
+    const [count, setCount] = useState([]);
+    const [editId, setEditId] = useState<string | null>(null);
+
+    useEffect(() => {
+        const getCount = async () => {
+            const data = await getDocs(countCollectionRef);
+            setCount(data.docs.map(doc => ({ ...doc.data(), id: doc.id })));
+        };
+        getCount();
+    }, []);
+
+    const onSubmit = async (data: FormProps) => {
+        try {
+            if (editId) {
+                await updateDoc(doc(db, "contas", editId), data);
+                setEditId(null);
+            } else {
+                await addDoc(collection(db, "contas"), data);
+            }
+            reset();
+        } catch (error) {
+            console.error("Erro ao adicionar documento: ", error);
+        }
+    };
+
+    const deleteCount = async (id: string) => {
+        try {
+            await deleteDoc(doc(db, "contas", id));
+            setCount(count.filter(item => item.id !== id));
+        } catch (error) {
+            console.error("Erro ao deletar documento: ", error);
+        }
+    };
+
+    const editCount = (id: string) => {
+        const countToEdit = count.find(item => item.id === id);
+        if (countToEdit) {
+            reset(countToEdit);
+            setEditId(id);
+        }
     };
 
     return (
-        <div className="flex items-center justify-center h-screen">
-            <form onSubmit={handleSubmit(onSubmit)} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-                <div className="mb-4">
-                    <label htmlFor="nome" className="block text-gray-700 text-sm font-bold mb-2">Nome:</label>
-                    <input {...register('nome')} className="border border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:border-blue-500" />
-                    {errors.nome && <span className="text-red-500 text-sm">{errors.nome.message}</span>}
+        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white">
+            <form onSubmit={handleSubmit(onSubmit)} className="bg-gray-800 shadow-md rounded-md p-8 mt-4 mb-4 max-w-lg">
+                <div className="flex flex-col mb-4">
+                    <label htmlFor="nome" className="block text-sm font-bold mb-2">Nome:</label>
+                    <input {...register('nome')} className="input text-black focus:outline-none rounded-md p-1" />
+                    {errors.nome && <span className="text-red-500 text-xs self-start mb-2">{errors.nome.message}</span>}
                 </div>
                 <div className="mb-4">
-                    <label htmlFor="operacao" className="block text-gray-700 text-sm font-bold mb-2">Operação:</label>
-                    <input {...register('operacao')} className="border border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:border-blue-500" />
-                    {errors.operacao && <span className="text-red-500 text-sm">{errors.operacao.message}</span>}
+                    <label htmlFor="operacao" className="block text-sm font-bold mb-2">Operação:</label>
+                    <input {...register('operacao')} className="input text-black focus:outline-none rounded-md p-1" />
+                    {errors.operacao && <span className="text-red-500 text-xs self-start mb-2">{errors.operacao.message}</span>}
                 </div>
                 <div className="mb-4">
-                    <label htmlFor="valor" className="block text-gray-700 text-sm font-bold mb-2">Valor:</label>
-                    <input type="text" {...register('valor')} className="border border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:border-blue-500" />
-                    {errors.valor && <span className="text-red-500 text-sm">{errors.valor.message}</span>}
+                    <label htmlFor="valor" className="block text-sm font-bold mb-2">Valor:</label>
+                    <input type="text" {...register('valor')} className="input text-black focus:outline-none rounded-md p-1" />
+                    {errors.valor && <span className="text-red-500 text-xs self-start mb-2">{errors.valor.message}</span>}
                 </div>
                 <div className="mb-4">
-                    <label htmlFor="pagamento" className="block text-gray-700 text-sm font-bold mb-2">Pagamento:</label>
-                    <input {...register('pagamento')} className="border border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:border-blue-500" />
-                    {errors.pagamento && <span className="text-red-500 text-sm">{errors.pagamento.message}</span>}
+                    <label htmlFor="pagamento" className="block text-sm font-bold mb-2">Pagamento:</label>
+                    <input {...register('pagamento')} className="input text-black focus:outline-none rounded-md p-1" />
+                    {errors.pagamento && <span className="text-red-500 text-xs self-start mb-2">{errors.pagamento.message}</span>}
                 </div>
                 <div className="mb-4">
-                    <label htmlFor="data" className="block text-gray-700 text-sm font-bold mb-2">Data:</label>
-                    <input type="date" {...register('data')} className="border border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:border-blue-500" />
-                    {errors.data && <span className="text-red-500 text-sm">{errors.data.message}</span>}
+                    <label htmlFor="data" className="block text-sm font-bold mb-2">Data:</label>
+                    <input type="date" {...register('data')} className="input text-black focus:outline-none rounded-md p-1" />
+                    {errors.data && <span className="text-red-500 text-xs self-start mb-2">{errors.data.message}</span>}
                 </div>
-                <Button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Criar</Button>
+                <Button type="submit" className="btn">{editId ? 'Editar' : 'Criar'}</Button>
             </form>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-4x2 ">
+                {count.map(count => (
+                    <div key={count.id} className="bg-gray-800 p-4 rounded-md">
+                        <h3 className="text-lg font-semibold mb-2">{count.nome}</h3>
+                        <p>Operação: {count.operacao}</p>
+                        <p>Valor: {count.valor}</p>
+                        <p>Pagamento: {count.pagamento}</p>
+                        <p>Data: {count.data}</p>
+                        <div className="flex justify-between mt-4">
+                            <button onClick={() => deleteCount(count.id)} className="text-red-500 hover:text-red-700 transition duration-300 ease-in-out">Deletar</button>
+                            <button onClick={() => editCount(count.id)} className="text-blue-500 hover:text-blue-700 transition duration-300 ease-in-out">Editar</button>
+                        </div>
+                    </div>
+                ))}
+            </div>
         </div>
     );
+
 }
+
+
+
+
