@@ -9,7 +9,7 @@ import { getFirestore, collection, addDoc, doc, deleteDoc, getDocs, updateDoc } 
 const schemaForm = z.object({
     nome: z.string().min(3, 'informe um nome válido'),
     operacao: z.string().min(3, 'informe uma operação válida'),
-    valor: z.string().min(1, 'informe um valor válido'),
+    valor: z.number().min(1, 'informe um valor válido'),
     pagamento: z.string().min(3, 'informe um tipo de pagamento válido'),
     data: z.string().min(1, 'informe uma data válida'),
 });
@@ -22,23 +22,34 @@ const firebaseApp = initializeApp({
     projectId: "project-clincrm",
 })
 
-export const db = getFirestore(firebaseApp)
+const db = getFirestore(firebaseApp)
 const countCollectionRef = collection(db, "contas");
 
+interface CountItemProps {
+    id: string;
+    nome: string;
+    operacao: string;
+    valor: number;
+    pagamento: string;
+    data: string;
+}
 
-export default function crud() {
+export default function Crud() {
 
     const { register, handleSubmit, formState: { errors }, reset } = useForm<FormProps>({
         resolver: zodResolver(schemaForm)
     });
 
-    const [count, setCount] = useState([]);
+    const [count, setCount] = useState<CountItemProps[]>([]);
+
     const [editId, setEditId] = useState<string | null>(null);
+
 
     useEffect(() => {
         const getCount = async () => {
             const data = await getDocs(countCollectionRef);
-            setCount(data.docs.map(doc => ({ ...doc.data(), id: doc.id })));
+            const countData = data.docs.map(doc => ({ id: doc.id, ...doc.data() } as CountItemProps)); // Certifique-se de tipar os dados como CountItemProps
+            setCount(countData);
         };
         getCount();
     }, []);
@@ -57,20 +68,21 @@ export default function crud() {
         }
     };
 
-    const deleteCount = async (id: string) => {
+    const deleteCount = async (id: number | string) => {
         try {
-            await deleteDoc(doc(db, "contas", id));
+            const docId = id.toString();
+            await deleteDoc(doc(db, "contas", docId));
             setCount(count.filter(item => item.id !== id));
         } catch (error) {
             console.error("Erro ao deletar documento: ", error);
         }
     };
 
-    const editCount = (id: string) => {
+    const editCount = (id: number | string) => {
         const countToEdit = count.find(item => item.id === id);
         if (countToEdit) {
             reset(countToEdit);
-            setEditId(id);
+            setEditId(id.toString());
         }
     };
 
@@ -89,7 +101,7 @@ export default function crud() {
                 </div>
                 <div className="mb-4">
                     <label htmlFor="valor" className="block text-sm font-bold mb-2">Valor:</label>
-                    <input type="text" {...register('valor')} className="input text-black focus:outline-none rounded-md p-1" />
+                    <input type="number" {...register('valor')} className="input text-black focus:outline-none rounded-md p-1" />
                     {errors.valor && <span className="text-red-500 text-xs self-start mb-2">{errors.valor.message}</span>}
                 </div>
                 <div className="mb-4">

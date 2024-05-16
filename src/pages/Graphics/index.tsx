@@ -15,8 +15,12 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig);
 const db = getFirestore(firebaseApp);
 
-export default function graphics() {
-    const [data, setData] = useState([]);
+interface DataProps {
+    id: string;
+}
+
+export default function Graphics() {
+    const [data, setData] = useState<DataProps[]>([]);
 
 
     useEffect(() => {

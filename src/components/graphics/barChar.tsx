@@ -1,9 +1,9 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from 'recharts';
 
 interface barChartType {
-    data: [any];
-    datakey?: string;
-    datekey?: string;
+    data: unknown[];
+    datakey: string;
+    datekey: string;
 }
 
 

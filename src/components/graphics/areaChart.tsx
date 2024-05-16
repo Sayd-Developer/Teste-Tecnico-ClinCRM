@@ -1,9 +1,9 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 
 interface areaChartType {
-    data: any[];
-    datakey?: string;
-    datekey?: string;
+    data: unknown[];
+    datakey: string;
+    datekey: string;
 }
 
 
