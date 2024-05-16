@@ -6,15 +6,11 @@ Sayd Karam
 
 Link do site já em deploy:
 
-```https://project-clincrm.web.app
-
-```
+https://project-clincrm.web.app
 
 Link do banco de dados usado:
 
-```https://console.firebase.google.com/project/project-clincrm/overview
-
-```
+https://console.firebase.google.com/project/project-clincrm/overview
 
 # Introdução
 
@@ -70,4 +66,5 @@ Usando npm:
   firebase init
 
   firebase deploy
+ev
 ```
