@@ -8,7 +8,7 @@ import { getFirestore, collection, addDoc, doc, deleteDoc, getDocs, updateDoc } 
 
 const schemaForm = z.object({
     nome: z.string().min(3, 'informe um nome válido'),
-    operacao: z.string().min(3, 'informe uma operação válida'),
+    operacao: z.string().min(3, 'informe uma descrisão válida'),
     valor: z.string().min(1, 'informe um valor válido'),
     pagamento: z.string().min(3, 'informe um tipo de pagamento válido'),
     data: z.string().min(1, 'informe uma data válida'),
@@ -94,29 +94,29 @@ export default function Crud() {
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white">
             <form onSubmit={handleSubmit(onSubmit)} className="bg-gray-800 shadow-md rounded-md p-8 mt-4 mb-4 max-w-lg">
                 <div className="flex flex-col mb-4">
-                    <label htmlFor="nome" className="block text-sm font-bold mb-2">Nome:</label>
+                    <label htmlFor="nome" className="block text-sm font-bold mb-2">Nome do paciente:</label>
                     <input {...register('nome')} className="input text-black focus:outline-none rounded-md p-1" />
-                    {errors.nome && <span className="text-red-500 text-xs self-start mb-2">{errors.nome.message}</span>}
+                    {errors.nome && <span className="text-red-500 text-xs self-start mb-1">{errors.nome.message}</span>}
                 </div>
                 <div className="mb-4">
-                    <label htmlFor="operacao" className="block text-sm font-bold mb-2">Operação:</label>
+                    <label htmlFor="operacao" className="block text-sm font-bold mb-2">Descrição:</label>
                     <input {...register('operacao')} className="input text-black focus:outline-none rounded-md p-1" />
-                    {errors.operacao && <span className="text-red-500 text-xs self-start mb-2">{errors.operacao.message}</span>}
+                    {errors.operacao && <span className="text-red-500 text-xs self-start mb-2 block">{errors.operacao.message}</span>}
                 </div>
                 <div className="mb-4">
                     <label htmlFor="valor" className="block text-sm font-bold mb-2">Valor:</label>
                     <input  {...register('valor')} className="input text-black focus:outline-none rounded-md p-1" />
-                    {errors.valor && <span className="text-red-500 text-xs self-start mb-2">{errors.valor.message}</span>}
+                    {errors.valor && <span className="text-red-500 text-xs self-start mb-1 block">{errors.valor.message}</span>}
                 </div>
                 <div className="mb-4">
-                    <label htmlFor="pagamento" className="block text-sm font-bold mb-2">Pagamento:</label>
+                    <label htmlFor="pagamento" className="block text-sm font-bold mb-2">Tipo de Pagamento:</label>
                     <input {...register('pagamento')} className="input text-black focus:outline-none rounded-md p-1" />
-                    {errors.pagamento && <span className="text-red-500 text-xs self-start mb-2">{errors.pagamento.message}</span>}
+                    {errors.pagamento && <span className="text-red-500 text-xs self-start mb-1 block">{errors.pagamento.message}</span>}
                 </div>
                 <div className="mb-4">
                     <label htmlFor="data" className="block text-sm font-bold mb-2">Data:</label>
                     <input type="date" {...register('data')} className="input text-black focus:outline-none rounded-md p-1" />
-                    {errors.data && <span className="text-red-500 text-xs self-start mb-2">{errors.data.message}</span>}
+                    {errors.data && <span className="text-red-500 text-xs self-start mb-1 block">{errors.data.message}</span>}
                 </div>
                 <Button type="submit" className="btn">{editId ? 'Editar' : 'Criar'}</Button>
             </form>
