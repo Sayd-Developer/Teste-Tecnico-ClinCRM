@@ -9,7 +9,7 @@ import { getFirestore, collection, addDoc, doc, deleteDoc, getDocs, updateDoc } 
 const schemaForm = z.object({
     nome: z.string().min(3, 'informe um nome válido'),
     operacao: z.string().min(3, 'informe uma operação válida'),
-    valor: z.number().min(1, 'informe um valor válido'),
+    valor: z.string().min(1, 'informe um valor válido'),
     pagamento: z.string().min(3, 'informe um tipo de pagamento válido'),
     data: z.string().min(1, 'informe uma data válida'),
 });
@@ -81,7 +81,11 @@ export default function Crud() {
     const editCount = (id: number | string) => {
         const countToEdit = count.find(item => item.id === id);
         if (countToEdit) {
-            reset(countToEdit);
+            // Converta o campo valor para uma string
+            const valorAsString = countToEdit.valor.toString();
+            const editedCount = { ...countToEdit, valor: valorAsString };
+
+            reset(editedCount);
             setEditId(id.toString());
         }
     };
@@ -101,7 +105,7 @@ export default function Crud() {
                 </div>
                 <div className="mb-4">
                     <label htmlFor="valor" className="block text-sm font-bold mb-2">Valor:</label>
-                    <input type="number" {...register('valor')} className="input text-black focus:outline-none rounded-md p-1" />
+                    <input  {...register('valor')} className="input text-black focus:outline-none rounded-md p-1" />
                     {errors.valor && <span className="text-red-500 text-xs self-start mb-2">{errors.valor.message}</span>}
                 </div>
                 <div className="mb-4">
