@@ -2,6 +2,20 @@
 
 Sayd Karam
 
+# Link do deploy
+
+Link do site já em deploy:
+
+```https://project-clincrm.web.app
+
+```
+
+Link do banco de dados usado:
+
+```https://console.firebase.google.com/project/project-clincrm/overview
+
+```
+
 # Introdução
 
 Usei o Vite para montar a minha estrutura de desenvolvimento, daí escolhi: React + TypeScript como diz na task. Comando usado:
@@ -44,4 +58,16 @@ Usando npm:
 
 ```bash
   npm run dev
+```
+
+# Obs... Para refazer o build do projeto, temos:
+
+```bash
+  npm run build
+
+  firebase login
+
+  firebase init
+
+  firebase deploy
 ```
