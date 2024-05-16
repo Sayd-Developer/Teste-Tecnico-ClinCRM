@@ -56,7 +56,7 @@ Usando npm:
   npm run dev
 ```
 
-# Obs... Para refazer o build do projeto, temos:
+# Observação: Para refazer o build do projeto, temos:
 
 ```bash
   npm run build
@@ -66,5 +66,5 @@ Usando npm:
   firebase init
 
   firebase deploy
-ev
+
 ```
