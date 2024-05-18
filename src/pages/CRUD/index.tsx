@@ -48,7 +48,7 @@ export default function Crud() {
     useEffect(() => {
         const getCount = async () => {
             const data = await getDocs(countCollectionRef);
-            const countData = data.docs.map(doc => ({ id: doc.id, ...doc.data() } as CountItemProps)); // Certifique-se de tipar os dados como CountItemProps
+            const countData = data.docs.map(doc => ({ id: doc.id, ...doc.data() } as CountItemProps));
             setCount(countData);
         };
         getCount();
@@ -81,7 +81,6 @@ export default function Crud() {
     const editCount = (id: number | string) => {
         const countToEdit = count.find(item => item.id === id);
         if (countToEdit) {
-            // Converta o campo valor para uma string
             const valorAsString = countToEdit.valor.toString();
             const editedCount = { ...countToEdit, valor: valorAsString };
 
